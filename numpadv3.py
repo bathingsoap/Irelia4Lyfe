@@ -37,13 +37,13 @@ while True:
     #print("GPIO32 ", int(gpio_2.read()))
     #print("GPIO30 ", int(gpio_3.read()))
     #print("GPIO26 ", int(gpio_4.read()))
-    if (int(gpio_1.read()) and int(gpio_2.reard())) == 1:
+    if (int(gpio_1.read()) and int(gpio_2.read())) == 1:
         ID += "1"
         print (ID)
-    elif (int(gpio_1.read()) and int(gpio_3.reard())) == 1:
+    elif (int(gpio_1.read()) and int(gpio_3.read())) == 1:
         ID += "2"
         print(ID)
-    elif (int(gpio_1.read()) and int(gpio_4.reard())) == 1:
+    elif (int(gpio_1.read()) and int(gpio_4.read())) == 1:
         ID += "3"
         print(ID)
     elif len(ID) == 3:
