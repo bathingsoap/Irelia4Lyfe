@@ -1,3 +1,4 @@
+#!/usr/bin/python
 class GPIOProcessor:
     '''This is the GPIO Processor class.  IT is used to create GPIO objects and
     keep track of them. Pins 23-34 have the their corresponding GPIO number

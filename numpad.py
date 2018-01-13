@@ -1,11 +1,10 @@
+#!/usr/bin/python
 from GPIOLibrary import GPIOProcessor
 import time
 
 i = 0
 ID = ""
 while i < 6:
-
-
 
     GP = GPIOProcessor()
 
