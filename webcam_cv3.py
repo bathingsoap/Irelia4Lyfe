@@ -19,7 +19,7 @@ log.basicConfig(filename='webcam.log',level=log.INFO)
 video_capture = cv2.VideoCapture(0)
 # anterior = 0
 
-subjects = ["", "Chris", "Anna", "Marsh", "Kelly", "Alex", "" ]
+subjects = ["", "Anna", "Chris", "Marsh", "Kelly", "Alex", "" ]
 
 def detect_face(img):
     #convert the test image to gray image as opencv face detector expects gray images
@@ -31,7 +31,10 @@ def detect_face(img):
 
     #let's detect multiscale (some images may be closer to camera than others) images
     #result is a list of faces
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=5);
+    faces = face_cascade.detectMultiScale(gray,
+        scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(30, 30));
     
     #if no faces are detected then return original img
     if (len(faces) == 0):
@@ -49,6 +52,7 @@ def prepare_training_data(data_folder_path):
     #------STEP-1--------
     #get the directories (one directory for each subject) in data folder
     dirs = os.listdir(data_folder_path)
+    
     
     #list to hold all subject faces
     faces = []
@@ -119,6 +123,8 @@ def prepare_training_data(data_folder_path):
 #and the other list will contain respective labels for each face
 print("Preparing data...")
 faces, labels = prepare_training_data("training-data")
+print(faces)
+print(labels)
 print("Data prepared")
  
 #print total faces and labels
@@ -139,9 +145,8 @@ def predict(test_img):
     #make a copy of the image as we don't want to change original image
     img = test_img.copy()
     #detect face from the image
-    face, rect = detect_face(img)
-    if face == None and rect == None:
-        return 0
+    face, rect = detect_face(img) 
+    
         
     #predict the image using our face recognizer 
     label, confidence = face_recognizer.predict(face)
@@ -181,7 +186,7 @@ while True:
     x2=0
     y2=0
     
-    if len(faces) >1:
+    if len(faces) !=1:
     # If more than 1 face is detected in the frame, draw a blue rectangle
         for (x, y, w, h) in faces:
             cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
@@ -215,19 +220,22 @@ while True:
             print("Predicting images...")
 
             #load comparing images
-            test_img1 = cv2.imread("editpics/"+str(index)+"c.png")
+            test_img1 = cv2.imread("oripics/"+str(index)+"s.jpg")
+            
+            cv2.imshow("aaa",test_img1)
             
             #perform a prediction
             
             predicted_img1 = predict(test_img1)
             
             if(predict == 0):
+                print("Prediction failed, retrying")
                 continue
             
             print("Prediction complete")
             
             #display both images
-            cv2.imshow(subjects[1], cv2.resize(predicted_img1, (400, 500)))
+            cv2.imshow("test",cv2.resize(predicted_img1, (400, 500)))
             
             cv2.waitKey(0)
             cv2.destroyAllWindows()
