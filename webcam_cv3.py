@@ -17,7 +17,7 @@ faceCascade = cv2.CascadeClassifier(cascPath)
 log.basicConfig(filename='webcam.log',level=log.INFO)
 
 video_capture = cv2.VideoCapture(0)
-anterior = 0
+# anterior = 0
 
 subjects = ["", "Chris", "Anna", "Marsh", "Kelly", "Alex", "" ]
 
@@ -136,11 +136,13 @@ def draw_text(img, text, x, y):
     cv2.putText(img, text, (x, y), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 255, 0), 2)
     
 def predict(test_img):
-    #make a copy of the image as we don't want to chang original image
+    #make a copy of the image as we don't want to change original image
     img = test_img.copy()
     #detect face from the image
     face, rect = detect_face(img)
-
+    if face == None and rect == None:
+        return 0
+        
     #predict the image using our face recognizer 
     label, confidence = face_recognizer.predict(face)
     #get name of respective label returned by face recognizer
@@ -183,9 +185,9 @@ while True:
     # If more than 1 face is detected in the frame, draw a blue rectangle
         for (x, y, w, h) in faces:
             cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
-        if anterior != len(faces):
-            anterior = len(faces)
-            log.info("faces: "+str(len(faces))+" at "+str(dt.datetime.now()))
+#         if anterior != len(faces):
+#             anterior = len(faces)
+#             log.info("faces: "+str(len(faces))+" at "+str(dt.datetime.now()))
         
     
     else:
@@ -197,9 +199,9 @@ while True:
             x2=x+w
             y2=y+h
             
-        if anterior != len(faces):
-            anterior = len(faces)
-            log.info("faces: "+str(len(faces))+" at "+str(dt.datetime.now()))
+#         if anterior != len(faces):
+#             anterior = len(faces)
+#             log.info("faces: "+str(len(faces))+" at "+str(dt.datetime.now()))
         Ttemp = time.time()
         if Ttemp - Tstart > 0.8:
             cv2.imwrite("oripics\\"+str(index)+"s.jpg",frame)
@@ -208,23 +210,25 @@ while True:
             region = im.crop(box)
             region.save("editpics\\"+str(index)+"c.png","PNG")
             
-            Tstart = Ttemp\
+            Tstart = Ttemp
         
             print("Predicting images...")
 
             #load comparing images
-            test_img1 = cv2.imread("editpics/"+str(index)+"c.jpg")
-            print("editpics/"+str(index)+"c.jpg")
-            test_img2 = cv2.imread("editpics/"+str(index)+"c.jpg")
+            test_img1 = cv2.imread("editpics/"+str(index)+"c.png")
             
             #perform a prediction
+            
             predicted_img1 = predict(test_img1)
-            predicted_img2 = predict(test_img2)
+            
+            if(predict == 0):
+                continue
+            
             print("Prediction complete")
             
             #display both images
             cv2.imshow(subjects[1], cv2.resize(predicted_img1, (400, 500)))
-            cv2.imshow(subjects[2], cv2.resize(predicted_img2, (400, 500)))
+            
             cv2.waitKey(0)
             cv2.destroyAllWindows()
             cv2.waitKey(1)
