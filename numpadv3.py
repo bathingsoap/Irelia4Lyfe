@@ -19,13 +19,13 @@ gpio_4 = mraa.Gpio(26)
 
 # set GPIO to input
 gpio_1.dir(mraa.DIR_IN)
-gpio_1.write(1)
+#gpio_1.write(1)
 gpio_2.dir(mraa.DIR_IN)
-gpio_2.write(1)
+#gpio_2.write(1)
 gpio_3.dir(mraa.DIR_IN)
-gpio_3.write(1)
+#gpio_3.write(1)
 gpio_4.dir(mraa.DIR_IN)
-gpio_4.write(1)
+#gpio_4.write(1)
 
 i = 0
 ID = ""
