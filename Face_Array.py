@@ -1,3 +1,4 @@
+#!/usr/bin/python
 '''
 Takes a single photo and returns the matrix value of it
 '''
