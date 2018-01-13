@@ -268,10 +268,12 @@ while True:
             if(name_of_person == IDNum):
                 print("Matched ID and Face")
                 exists = False
+                sleep(25)
                 continue
             else:
                 print("ID and Face not matching")
                 exists = False
+                sleep(25)
                 continue
     except cv2.error:
         print("No match, try again")
