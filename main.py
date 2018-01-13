@@ -22,6 +22,8 @@ video_capture = cv2.VideoCapture(1)
 subjects = ["", "1111", "2222", "3333", "4444", "5555", "6666" ] 
 # 2222 = Anna, 1111= Chris, 3333 = Marsh, 4444 = Kelly, 5555 = Alex, 6666 = Jerry
 
+
+
 def detect_face(img):
     #convert the test image to gray image as opencv face detector expects gray images
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

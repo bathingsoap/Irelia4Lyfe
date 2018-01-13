@@ -22,6 +22,171 @@ video_capture = cv2.VideoCapture(0)
 subjects = ["", "1111", "2222", "3333", "4444", "5555", "6666" ] 
 # 1111 = Anna, 2222 = Chris, 3333 = Marsh, 4444 = Kelly, 5555 = Alex, 6666 = Jerry
 
+import mraa
+import time
+# Refer to the pin-out diagram for the GPIO number to silk print mapping
+# in this example the number 2 maps to P10 on LinkIt Smart 7688 board
+#from mraa import Result as r
+
+rowVal = 0
+colVal = 0
+value = ""
+pin1 = mraa.Gpio(24)
+pin2 = mraa.Gpio(26)
+pin3 = mraa.Gpio(30)
+pin4 = mraa.Gpio(32)
+pin5 = mraa.Gpio(34)
+pin6 = mraa.Gpio(23)
+pin7 = mraa.Gpio(25)
+pin8 = mraa.Gpio(27)
+
+pin1.dir(mraa.DIR_IN)
+pin2.dir(mraa.DIR_IN)
+pin3.dir(mraa.DIR_IN)
+pin4.dir(mraa.DIR_IN)
+pin5.dir(mraa.DIR_OUT)
+pin6.dir(mraa.DIR_OUT)
+pin7.dir(mraa.DIR_OUT)
+pin8.dir(mraa.DIR_OUT)
+
+if(pin1 == None):
+    print('Error')
+#ret = pin1.dir(mraa.DIR_IN)
+
+#if(ret!=mraa.SUCCESS):
+#    print('s')
+
+#pin8.write(1)
+#pin1.write(1)
+pin8.write(1)
+pin7.write(1)
+pin6.write(1)
+pin5.write(1)
+pin4.write(0)
+pin3.write(0)
+pin2.write(0)
+pin1.write(0)
+
+def getID():
+    result = ""
+    while True:
+        if(pin1.read() == 1):
+            rowVal=1
+        if(pin2.read() == 1):
+            rowVal=2
+        if(pin3.read() == 1):
+            rowVal=3
+        if(pin4.read() == 1):
+            rowVal=4
+        if not rowVal == 0:
+            #num = pin.read()
+            pin5.dir(mraa.DIR_IN)
+            pin6.dir(mraa.DIR_IN)
+            pin7.dir(mraa.DIR_IN)
+            pin8.dir(mraa.DIR_IN)
+            pin5.write(0)
+            pin6.write(0)
+            pin7.write(0)
+            pin8.write(0)
+            if rowVal==1:
+                pin1.dir(mraa.DIR_OUT)
+        if(pin3.read() == 1):
+            rowVal=3
+        if(pin4.read() == 1):
+            rowVal=4
+        if not rowVal == 0:
+            #num = pin.read()
+            pin5.dir(mraa.DIR_IN)
+            pin6.dir(mraa.DIR_IN)
+            pin7.dir(mraa.DIR_IN)
+            pin8.dir(mraa.DIR_IN)
+            pin5.write(0)
+            pin6.write(0)
+            pin7.write(0)
+            pin8.write(0)
+            if rowVal==1:
+                pin1.dir(mraa.DIR_OUT)
+                pin1.write(1)
+            if rowVal==2:
+                pin2.dir(mraa.DIR_OUT)
+                pin2.write(1)
+            if rowVal==3:
+                pin3.dir(mraa.DIR_OUT)
+                pin3.write(1)
+            if rowVal==4:
+                pin4.dir(mraa.DIR_OUT)
+                pin4.write(1)
+            if(pin5.read()==1):
+                colVal = 4
+            if(pin6.read()==1):
+                colVal = 3
+            if(pin7.read()==1):
+                colVal = 2
+            if(pin8.read()==1):
+                colVal = 1
+            #print (str(rowVal) + "   " +str(colVal))
+    
+        pin1.dir(mraa.DIR_IN)
+        pin2.dir(mraa.DIR_IN)
+        pin3.dir(mraa.DIR_IN)
+        pin4.dir(mraa.DIR_IN)
+        pin5.dir(mraa.DIR_OUT)
+        pin6.dir(mraa.DIR_OUT)
+        pin7.dir(mraa.DIR_OUT)
+        pin8.dir(mraa.DIR_OUT)
+        pin8.write(1)
+        pin7.write(1)
+        pin6.write(1)
+        pin5.write(1)
+        pin4.write(0)
+        pin3.write(0)
+        pin2.write(0)
+        pin1.write(0)
+    
+        if(rowVal==1 and colVal ==1):
+            value = "A"
+        if(rowVal==2 and colVal ==1):
+            value = "3"
+        if(rowVal==3 and colVal ==1):
+            value = "2"
+        if(rowVal==4 and colVal ==1):
+            value = "1"
+        if(rowVal==1 and colVal ==2):
+            value = "B"
+        if(rowVal==2 and colVal ==2):
+            value = "6"
+        if(rowVal==3 and colVal ==2):
+            value = "5"
+        if(rowVal==4 and colVal ==2):
+            value = "4"
+        if(rowVal==1 and colVal ==3):
+            value = "C"
+        if(rowVal==2 and colVal ==3):
+            value = "9"
+        if(rowVal==3 and colVal ==3):
+            value = "8"
+        if(rowVal==4 and colVal ==3):
+            value = "7"
+        if(rowVal==1 and colVal ==4):
+            value = "D"
+        if(rowVal==2 and colVal ==4):
+            value = "#"
+        if(rowVal==3 and colVal ==4):
+            value = "0"
+        if(rowVal==4 and colVal ==4):
+            value = "*"
+            break
+    
+        if not value == "":
+            print(value)
+        result+=value
+        time.sleep(0.3)
+        colVal=0
+        rowVal=0
+        value=""
+    
+    return result
+
 def detect_face(img):
     #convert the test image to gray image as opencv face detector expects gray images
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -165,9 +330,17 @@ def predict(test_img):
     return img, label_text, confidence
 
 
-
+exists = False
 
 while True:
+    while not exists:
+        IDNum = getID()
+        dirs = os.listdir("Faces")
+        for face in dirs:
+            if IDNum in face:
+                exists =True
+        if not exists:
+            print("Invalid ID Number")
     try:
         if not video_capture.isOpened():
             print('Unable to load camera.')
@@ -258,6 +431,18 @@ while True:
     
         # Display the resulting frame
         #cv2.imshow('Video', frame)
+        if(confidence_num < 50):
+            if(name_of_person == IDNum):
+                print("Matched ID and Face")
+                exists = False
+                sleep(5)
+                continue
+            else:
+                print("ID and Face not matching")
+                exists = False
+                sleep(5)
+                continue
+        
     except cv2.error:
         print("No match, try again")
     #except OpenCV Error:
