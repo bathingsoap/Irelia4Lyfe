@@ -19,7 +19,8 @@ log.basicConfig(filename='webcam.log',level=log.INFO)
 video_capture = cv2.VideoCapture(0)
 # anterior = 0
 
-subjects = ["", "Anna", "Chris", "Marsh", "Kelly", "Alex", "Jerry" ]
+subjects = ["", "1111", "2222", "3333", "4444", "5555", "6666" ] 
+# 2222 = Anna, 1111 = Chris, 3333 = Marsh, 4444 = Kelly, 5555 = Alex, 6666 = Jerry
 
 def detect_face(img):
     #convert the test image to gray image as opencv face detector expects gray images
@@ -188,14 +189,15 @@ while True:
         x2=0
         y2=0
         
-        if len(faces) !=1:
+        if len(faces) > 1:
         # If more than 1 face is detected in the frame, draw a blue rectangle
             for (x, y, w, h) in faces:
                 cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
     #         if anterior != len(faces):
     #             anterior = len(faces)
     #             log.info("faces: "+str(len(faces))+" at "+str(dt.datetime.now()))
-            
+        elif len(faces) == 0:
+            continue
         
         else:
         #If only 1 face is detected in the frame, draw a green rectangle around the face
@@ -211,6 +213,7 @@ while True:
     #             log.info("faces: "+str(len(faces))+" at "+str(dt.datetime.now()))
             Ttemp = time.time()
             if Ttemp - Tstart > 0.8:
+
                 cv2.imwrite("oripics\\"+str(index)+"s.jpg",frame)
                 box = (x1*0.97,y1*0.97,x2*1.03,y2*1.03)
                 im = Image.open("oripics\\"+str(index)+"s.jpg")
