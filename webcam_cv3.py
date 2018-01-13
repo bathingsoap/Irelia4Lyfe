@@ -16,10 +16,10 @@ cascPath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascPath)
 log.basicConfig(filename='webcam.log',level=log.INFO)
 
-video_capture = cv2.VideoCapture(1)
+video_capture = cv2.VideoCapture(0)
 # anterior = 0
 
-subjects = ["", "Anna", "Chris", "Marsh", "Kelly", "Alex", "" ]
+subjects = ["", "Anna", "Chris", "Marsh", "Kelly", "Alex", "Jerry" ]
 
 def detect_face(img):
     #convert the test image to gray image as opencv face detector expects gray images
@@ -224,7 +224,6 @@ while True:
                 #load comparing images
                 test_img1 = cv2.imread("oripics/"+str(index)+"s.jpg")
                 
-                cv2.imshow("aaa",test_img1)
                 
                 #perform a prediction
                 print("Test image", test_img1)
@@ -240,10 +239,6 @@ while True:
                 #display both images
                 cv2.imshow("test",cv2.resize(predicted_img1, (400, 500)))
                 
-                cv2.waitKey(0)
-                cv2.destroyAllWindows()
-                cv2.waitKey(1)
-                cv2.destroyAllWindows()
                 
                 index = index + 1
     
