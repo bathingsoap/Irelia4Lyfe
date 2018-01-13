@@ -16,11 +16,11 @@ cascPath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascPath)
 log.basicConfig(filename='webcam.log',level=log.INFO)
 
-video_capture = cv2.VideoCapture(0)
+video_capture = cv2.VideoCapture(1)
 # anterior = 0
 
 subjects = ["", "1111", "2222", "3333", "4444", "5555", "6666" ] 
-# 1111 = Anna, 2222 = Chris, 3333 = Marsh, 4444 = Kelly, 5555 = Alex, 6666 = Jerry
+# 2222 = Anna, 1111= Chris, 3333 = Marsh, 4444 = Kelly, 5555 = Alex, 6666 = Jerry
 
 def detect_face(img):
     #convert the test image to gray image as opencv face detector expects gray images
@@ -150,7 +150,7 @@ def predict(test_img):
     
     #predict the image using our face recognizer 
     label, confidence = face_recognizer.predict(face)
-    print("Confidence", confidence)  #confirm with marshall later what confidence means
+    print("Confidence", confidence)  
     
     #get name of respective label returned by face recognizer
     label_text = subjects[label]
@@ -164,10 +164,18 @@ def predict(test_img):
     
     return img, label_text, confidence
 
-
-
+exists = False
 
 while True:
+    while not exists:
+        IDNum = input("Please enter your ID Number: ")
+        dirs = os.listdir("Faces")
+        print(dirs)
+        for face in dirs:
+            if IDNum in face:
+                exists =True
+        if not exists:
+            print("Invalid ID Number")
     try:
         if not video_capture.isOpened():
             print('Unable to load camera.')
@@ -235,14 +243,11 @@ while True:
                 print("Test image", test_img1)
                 predicted_img1, name_of_person, confidence_num = predict(test_img1) #added label
                 print(predicted_img1, name_of_person)
-                
-    #             if(predict == 0):
-    #                 print("Prediction failed, retrying")
-    #                 continue
+                    
                 
                 print("Prediction complete")
                 
-                #display both images
+                #display recognition
                 cv2.imshow("test",cv2.resize(predicted_img1, (400, 500)))
                 
                 
@@ -258,8 +263,21 @@ while True:
     
         # Display the resulting frame
         cv2.imshow('Video', frame)
+        
+        if(confidence_num < 50):
+            if(name_of_person == IDNum):
+                print("Matched ID and Face")
+                exists = False
+                continue
+            else:
+                print("ID and Face not matching")
+                exists = False
+                continue
     except cv2.error:
         print("No match, try again")
+        
+    except:
+        pass
     #except OpenCV Error:
         
 
