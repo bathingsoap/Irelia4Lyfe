@@ -150,7 +150,7 @@ def predict(test_img):
     
     #predict the image using our face recognizer 
     label, confidence = face_recognizer.predict(face)
-    print("Confidence", confidence)  
+    
     
     #get name of respective label returned by face recognizer
     label_text = subjects[label]
@@ -170,7 +170,6 @@ while True:
     while not exists:
         IDNum = input("Please enter your ID Number: ")
         dirs = os.listdir("Faces")
-        print(dirs)
         for face in dirs:
             if IDNum in face:
                 exists =True
@@ -240,9 +239,7 @@ while True:
                 
                 
                 #perform a prediction
-                print("Test image", test_img1)
                 predicted_img1, name_of_person, confidence_num = predict(test_img1) #added label
-                print(predicted_img1, name_of_person)
                     
                 
                 print("Prediction complete")
@@ -268,12 +265,12 @@ while True:
             if(name_of_person == IDNum):
                 print("Matched ID and Face")
                 exists = False
-                sleep(25)
+                sleep(5)
                 continue
             else:
                 print("ID and Face not matching")
                 exists = False
-                sleep(25)
+                sleep(5)
                 continue
     except cv2.error:
         print("No match, try again")
