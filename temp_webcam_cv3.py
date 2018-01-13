@@ -1,8 +1,11 @@
+#!/usr/bin/python
 import cv2
 import sys
 import logging as log
 import datetime as dt
 from time import sleep
+
+import os #ANNA's changes
 
 ###
 import time
@@ -18,7 +21,7 @@ cascPath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascPath)
 log.basicConfig(filename='webcam.log',level=log.INFO)
 
-video_capture = cv2.VideoCapture(0)
+video_capture = cv2.VideoCapture(1)
 anterior = 0
 
 while True:
@@ -38,6 +41,12 @@ while True:
         minNeighbors=5,
         minSize=(30, 30)
     )
+    
+    # Display the resulting frame
+    cv2.imshow('Video', frame)
+
+    if faces == ():
+        continue
 
     x1=0
     y1=0
@@ -56,8 +65,6 @@ while True:
         log.info("faces: "+str(len(faces))+" at "+str(dt.datetime.now()))
 
 
-    # Display the resulting frame
-    cv2.imshow('Video', frame)
     
 ###
 #    Ttemp = time.time()
@@ -68,19 +75,21 @@ while True:
 ###
     Ttemp = time.time()
     if Ttemp - Tstart > 0.8:
+        if not os.path.exists("oripics"):
+            os.makedirs("oripics")
         cv2.imwrite("oripics\\"+str(index)+"s.jpg",frame)
         box = (x1*0.97,y1*0.97,x2*1.03,y2*1.03)
         im = Image.open("oripics\\"+str(index)+"s.jpg")
         region = im.crop(box)
+        if not os.path.exists("editpics"):
+            os.makedirs("editpics")
         region.save("editpics\\"+str(index)+"c.png","PNG")
-        index = index + 1
+        index += 1
         Tstart = Ttemp
         
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-    # Display the resulting frame
-    cv2.imshow('Video', frame)
 
 # When everything is done, release the capture
 video_capture.release()
