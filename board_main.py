@@ -16,7 +16,7 @@ cascPath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascPath)
 log.basicConfig(filename='webcam.log',level=log.INFO)
 
-video_capture = cv2.VideoCapture(1)
+video_capture = cv2.VideoCapture(0)
 # anterior = 0
 
 subjects = ["", "1111", "2222", "3333", "4444", "5555", "6666" ] 
