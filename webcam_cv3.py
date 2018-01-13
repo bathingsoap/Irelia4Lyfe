@@ -16,11 +16,11 @@ cascPath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascPath)
 log.basicConfig(filename='webcam.log',level=log.INFO)
 
-video_capture = cv2.VideoCapture(0)
+video_capture = cv2.VideoCapture(1)
 # anterior = 0
 
 subjects = ["", "1111", "2222", "3333", "4444", "5555", "6666" ] 
-# 2222 = Anna, 1111 = Chris, 3333 = Marsh, 4444 = Kelly, 5555 = Alex, 6666 = Jerry
+# 1111 = Anna, 2222 = Chris, 3333 = Marsh, 4444 = Kelly, 5555 = Alex, 6666 = Jerry
 
 def detect_face(img):
     #convert the test image to gray image as opencv face detector expects gray images
@@ -150,16 +150,19 @@ def predict(test_img):
     
     #predict the image using our face recognizer 
     label, confidence = face_recognizer.predict(face)
+    print("Confidence", confidence)  #confirm with marshall later what confidence means
     
     #get name of respective label returned by face recognizer
     label_text = subjects[label]
     
     #draw a rectangle around face detected
     draw_rectangle(img, rect)
-    #draw name of predicted person
-    draw_text(img, label_text, rect[0], rect[1]-5)
     
-    return img, label_text
+    #draw name of predicted person if confidence > 50
+    if confidence < 70:
+        draw_text(img, label_text, rect[0], rect[1]-5)
+    
+    return img, label_text, confidence
 
 
 
@@ -230,7 +233,7 @@ while True:
                 
                 #perform a prediction
                 print("Test image", test_img1)
-                predicted_img1, name_of_person = predict(test_img1) #added label
+                predicted_img1, name_of_person, confidence_num = predict(test_img1) #added label
                 print(predicted_img1, name_of_person)
                 
     #             if(predict == 0):
