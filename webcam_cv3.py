@@ -87,7 +87,7 @@ def prepare_training_data(data_folder_path):
             
             #ignore system files like .DS_Store
             if image_name.startswith("."):
-                continue;
+                continue
             
             #build image path
             #sample image path = training-data/s1/1.pgm
@@ -198,7 +198,7 @@ while True:
     else:
     #If only 1 face is detected in the frame, draw a green rectangle around the face
         for (x, y, w, h) in faces:
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+            #cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
             x1=x
             y1=y
             x2=x+w
