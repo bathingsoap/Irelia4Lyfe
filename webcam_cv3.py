@@ -207,13 +207,14 @@ while True:
             im = Image.open("oripics\\"+str(index)+"s.jpg")
             region = im.crop(box)
             region.save("editpics\\"+str(index)+"c.png","PNG")
-            index = index + 1
+            
             Tstart = Ttemp\
         
             print("Predicting images...")
 
             #load comparing images
             test_img1 = cv2.imread("editpics/"+str(index)+"c.jpg")
+            print("editpics/"+str(index)+"c.jpg")
             test_img2 = cv2.imread("editpics/"+str(index)+"c.jpg")
             
             #perform a prediction
@@ -228,6 +229,8 @@ while True:
             cv2.destroyAllWindows()
             cv2.waitKey(1)
             cv2.destroyAllWindows()
+            
+            index = index + 1
 
 
     # Display the resulting frame
