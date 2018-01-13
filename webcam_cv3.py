@@ -16,7 +16,7 @@ cascPath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascPath)
 log.basicConfig(filename='webcam.log',level=log.INFO)
 
-video_capture = cv2.VideoCapture(0)
+video_capture = cv2.VideoCapture(1)
 # anterior = 0
 
 subjects = ["", "Anna", "Chris", "Marsh", "Kelly", "Alex", "" ]
@@ -147,9 +147,9 @@ def predict(test_img):
     #detect face from the image
     face, rect = detect_face(img) 
     
-        
     #predict the image using our face recognizer 
     label, confidence = face_recognizer.predict(face)
+    
     #get name of respective label returned by face recognizer
     label_text = subjects[label]
     
@@ -158,102 +158,109 @@ def predict(test_img):
     #draw name of predicted person
     draw_text(img, label_text, rect[0], rect[1]-5)
     
-    return img
+    return img, label_text
+
 
 
 
 while True:
-    if not video_capture.isOpened():
-        print('Unable to load camera.')
-        sleep(5)
-        pass
-
-    # Capture frame-by-frame
-    ret, frame = video_capture.read()
-
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-    faces = faceCascade.detectMultiScale(
-        gray,
-        scaleFactor=1.1,
-        minNeighbors=5,
-        minSize=(30, 30)
-    )
-    if faces == ():
-        continue
-    x1=0
-    y1=0
-    x2=0
-    y2=0
+    try:
+        if not video_capture.isOpened():
+            print('Unable to load camera.')
+            sleep(5)
+            pass
     
-    if len(faces) !=1:
-    # If more than 1 face is detected in the frame, draw a blue rectangle
-        for (x, y, w, h) in faces:
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
-#         if anterior != len(faces):
-#             anterior = len(faces)
-#             log.info("faces: "+str(len(faces))+" at "+str(dt.datetime.now()))
-        
+        # Capture frame-by-frame
+        ret, frame = video_capture.read()
     
-    else:
-    #If only 1 face is detected in the frame, draw a green rectangle around the face
-        for (x, y, w, h) in faces:
-            #cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-            x1=x
-            y1=y
-            x2=x+w
-            y2=y+h
-            
-#         if anterior != len(faces):
-#             anterior = len(faces)
-#             log.info("faces: "+str(len(faces))+" at "+str(dt.datetime.now()))
-        Ttemp = time.time()
-        if Ttemp - Tstart > 0.8:
-            cv2.imwrite("oripics\\"+str(index)+"s.jpg",frame)
-            box = (x1*0.97,y1*0.97,x2*1.03,y2*1.03)
-            im = Image.open("oripics\\"+str(index)+"s.jpg")
-            region = im.crop(box)
-            region.save("editpics\\"+str(index)+"c.png","PNG")
-            
-            Tstart = Ttemp
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    
+        faces = faceCascade.detectMultiScale(
+            gray,
+            scaleFactor=1.1,
+            minNeighbors=5,
+            minSize=(30, 30)
+        )
+        if faces == ():
+            continue
+        x1=0
+        y1=0
+        x2=0
+        y2=0
         
-            print("Predicting images...")
-
-            #load comparing images
-            test_img1 = cv2.imread("oripics/"+str(index)+"s.jpg")
+        if len(faces) !=1:
+        # If more than 1 face is detected in the frame, draw a blue rectangle
+            for (x, y, w, h) in faces:
+                cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
+    #         if anterior != len(faces):
+    #             anterior = len(faces)
+    #             log.info("faces: "+str(len(faces))+" at "+str(dt.datetime.now()))
             
-            cv2.imshow("aaa",test_img1)
+        
+        else:
+        #If only 1 face is detected in the frame, draw a green rectangle around the face
+            for (x, y, w, h) in faces:
+                #cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+                x1=x
+                y1=y
+                x2=x+w
+                y2=y+h
+                
+    #         if anterior != len(faces):
+    #             anterior = len(faces)
+    #             log.info("faces: "+str(len(faces))+" at "+str(dt.datetime.now()))
+            Ttemp = time.time()
+            if Ttemp - Tstart > 0.8:
+                cv2.imwrite("oripics\\"+str(index)+"s.jpg",frame)
+                box = (x1*0.97,y1*0.97,x2*1.03,y2*1.03)
+                im = Image.open("oripics\\"+str(index)+"s.jpg")
+                region = im.crop(box)
+                region.save("editpics\\"+str(index)+"c.png","PNG")
+                
+                Tstart = Ttemp
             
-            #perform a prediction
-            
-            predicted_img1 = predict(test_img1)
-            
-            if(predict == 0):
-                print("Prediction failed, retrying")
-                continue
-            
-            print("Prediction complete")
-            
-            #display both images
-            cv2.imshow("test",cv2.resize(predicted_img1, (400, 500)))
-            
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-            cv2.waitKey(1)
-            cv2.destroyAllWindows()
-            
-            index = index + 1
-
-
-    # Display the resulting frame
-    cv2.imshow('Video', frame)
-
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-    # Display the resulting frame
-    cv2.imshow('Video', frame)
+                print("Predicting images...")
+    
+                #load comparing images
+                test_img1 = cv2.imread("oripics/"+str(index)+"s.jpg")
+                
+                cv2.imshow("aaa",test_img1)
+                
+                #perform a prediction
+                print("Test image", test_img1)
+                predicted_img1, name_of_person = predict(test_img1) #added label
+                print(predicted_img1, name_of_person)
+                
+    #             if(predict == 0):
+    #                 print("Prediction failed, retrying")
+    #                 continue
+                
+                print("Prediction complete")
+                
+                #display both images
+                cv2.imshow("test",cv2.resize(predicted_img1, (400, 500)))
+                
+                cv2.waitKey(0)
+                cv2.destroyAllWindows()
+                cv2.waitKey(1)
+                cv2.destroyAllWindows()
+                
+                index = index + 1
+    
+    
+        # Display the resulting frame
+        cv2.imshow('Video', frame)
+    
+    
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+    
+        # Display the resulting frame
+        cv2.imshow('Video', frame)
+    except cv2.error:
+        print("No match, try again")
+    #except OpenCV Error:
+        
 
 # When everything is done, release the capture
 video_capture.release()
